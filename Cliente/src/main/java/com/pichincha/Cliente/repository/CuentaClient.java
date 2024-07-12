@@ -14,7 +14,7 @@ import com.pichincha.Cliente.configuration.FeignClientConfig;
 import com.pichincha.Cliente.model.CuentaDTO;
 import com.pichincha.Cliente.model.MovimientoDTO;
 
-@FeignClient(name = "Cuentas", url = "http://cuentas-app:8081", configuration = FeignClientConfig.class)
+@FeignClient(name = "Cuentas", url = "${cuentas_url}", configuration = FeignClientConfig.class)
 public interface CuentaClient {
 
 	@GetMapping("/cuentas/cliente/{clienteId}")
