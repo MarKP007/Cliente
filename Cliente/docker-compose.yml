@@ -1,0 +1,32 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+name: cliente-dc
+networks:
+  ark-network:
+
+services:
+  cliente-app:
+    image: cliente
+    ports:
+      - 8080:8080
+    depends_on:
+      - ark-mssql
+
+  ark-mssql:
+    image: mcr.microsoft.com/mssql/server:2019-CU16-GDR1-ubuntu-20.04
+    # volumes are not supported on macOS
+    #volumes:
+    #  - data:/var/opt/mssql
+    #networks:
+    #  - ark-network
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - SA_PASSWORD=MarKP-007
+      - MSSQL_DATABASE=clienteBDD
+      - MSSQL_SLEEP=60
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - "1433:1433"
+    command: /bin/bash -c '/opt/mssql/bin/sqlservr & echo "wait $$MSSQL_SLEEP sec for DB to start "; sleep $$MSSQL_SLEEP; /opt/mssql-tools/bin/sqlcmd -U sa -P $$SA_PASSWORD -d tempdb -q "EXIT(CREATE DATABASE $$MSSQL_DATABASE)"; wait;'
